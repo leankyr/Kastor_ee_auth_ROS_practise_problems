@@ -1,0 +1,6 @@
+string player
+int16 x
+int16 y
+---
+string Message
+int16[9] table
