@@ -1,0 +1,3 @@
+<launch>
+	<node name="manipulator" pkg="simple_communication"	type="manipulator.py" output="screen"/>
+</launch>
