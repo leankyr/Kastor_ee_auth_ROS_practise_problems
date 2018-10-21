@@ -49,6 +49,8 @@ def handle_request(req):
 
     win = evaluate_winner()
     mes = decide_winner(win)
+    #basasd
+    #fssfdadas 
 
     if win != 0:
         rospy.signal_shutdown('game is over!!')
