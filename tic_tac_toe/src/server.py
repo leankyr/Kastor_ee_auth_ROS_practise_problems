@@ -7,6 +7,7 @@ from tic_tac_toe.srv import *
 #from std_msgs.msg import String
 
 table = [0]*9
+player1 = True
 
 def decide_winner(win):
     if win == 0:
@@ -19,25 +20,32 @@ def decide_winner(win):
 
 
 def handle_request(req):
-    
+    global player1
     if req.x > 3 or req.y > 3:
         mes = 'showing Table'
         rospy.loginfo(mes)
         return moveResponse(mes,table)
      # calculating change in table 
     pos = 3*(req.x-1) + req.y - 1
-    
+
     if table[pos] != 0:
         mes = 'Position already taken.. Showin table...'
         rospy.loginfo(mes)
         return moveResponse(mes,table)
 
     # Desiding who made move  
-    if req.player == './src/player1.py':
+    if req.player == './src/player1.py' and player1 == True:
         table[pos] = 1
-    if req.player == './src/player2.py':
+        player1 = False
+    elif req.player == './src/player2.py' and player1 == False:
         table[pos] = 2
-
+        player1 = True
+    elif req.player == './src/player2.py' and player1 == True:
+        mes = 'It is Players 1 Turn!!.. Showing table!!'
+        return moveResponse(mes,table)
+    elif req.player == './src/player1.py' and player1 == False:
+        mes = 'It is Players 2 Turn!!.. Showing table!!'
+        return moveResponse(mes,table)
 
     win = evaluate_winner()
     mes = decide_winner(win)
