@@ -21,17 +21,18 @@ def decide_winner(win):
 def handle_request(req):
 
     print "Requesting move..."
- #   for invalid move post table
-
-
-
+    #for invalid move post table
     if req.x > 3 or req.y > 3:
         mes = "showing Table"
         print mes
         return moveResponse(mes,table)
      # calculating change in table 
     pos = 3*(req.x-1) + req.y - 1
-
+    
+    if table[pos] != 0:
+        mes = "Position already taken.. Showin table..."
+        rospy.loginfo(mes)
+        return moveResponse(mes,table)
 
     # Desiding who made move  
     if req.player == './src/player1.py':
