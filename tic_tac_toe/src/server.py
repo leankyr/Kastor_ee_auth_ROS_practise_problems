@@ -33,7 +33,7 @@ def handle_request(req):
         rospy.loginfo(mes)
         return moveResponse(mes,table)
 
-    # Desiding who made move  
+    # Dest iding who made move  
     if req.player == './src/player1.py' and player1 == True:
         table[pos] = 1
         player1 = False
