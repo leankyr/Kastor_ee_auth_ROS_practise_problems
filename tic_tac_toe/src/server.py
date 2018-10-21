@@ -10,6 +10,7 @@ table = [0]*9
 player1 = True
 shown = False
 win = 0
+draw = False
 def decide_winner(win):
     if win == 0:
         mes = 'showing Table after Play... '
@@ -19,14 +20,31 @@ def decide_winner(win):
         mes = 'player2 won'
     return mes
 
+def check_draw():
+    global draw
+    if min(table) == 1:
+        mes = 'Game is drawn'
+        draw = True
+        return moveResponse(mes,table)
+
+    return 
 
 def handle_request(req):
     global player1
     global shown
     global win
+    global draw
+
+    if draw:
+        shown = True
+        draw = False
+        mes = 'Game is drawnn'
+        return moveResponse(mes,table)
+
     if shown:
         rospy.signal_shutdown('game is over!!')
 
+    check_draw()
 
     if win == 1 and req.player == './src/player2.py' and shown == False:
         rospy.loginfo('showing table to loser playe2')
