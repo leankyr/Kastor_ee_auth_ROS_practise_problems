@@ -8,7 +8,8 @@ from tic_tac_toe.srv import *
 
 table = [0]*9
 player1 = True
-
+shown = False
+win = 0
 def decide_winner(win):
     if win == 0:
         mes = 'showing Table after Play... '
@@ -21,6 +22,24 @@ def decide_winner(win):
 
 def handle_request(req):
     global player1
+    global shown
+    global win
+    if shown:
+        rospy.signal_shutdown('game is over!!')
+
+
+    if win == 1 and req.player == './src/player2.py' and shown == False:
+        rospy.loginfo('showing table to loser playe2')
+        mes = 'Player 1 won! send any valid move to shutdown server...'
+        shown = True
+        return moveResponse(mes,table)
+    if win == 2 and req.player == './src/player1.py' and shown == False:
+        rospy.loginfo('showing table to loser playe1')
+        mes = 'Player 2 won! send any valid move to shutdown server... '
+        shown = True
+        return moveResponse(mes,table)
+
+
     if req.x > 3 or req.y > 3:
         mes = 'showing Table'
         rospy.loginfo(mes)
@@ -49,12 +68,9 @@ def handle_request(req):
 
     win = evaluate_winner()
     mes = decide_winner(win)
-    #basasd
-    #fssfdadas 
+    
 
-    if win != 0:
-        rospy.signal_shutdown('game is over!!')
-
+    
     return moveResponse(mes,table)
 
 
