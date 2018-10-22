@@ -3,7 +3,7 @@
 import sys
 import rospy
 from tic_tac_toe.msg import table
-from tic_tac_toe.srv import *
+from tic_tac_toe.srv import move,moveResponse
 #from std_msgs.msg import String
 
 table = [0]*9
@@ -86,9 +86,6 @@ def handle_request(req):
 
     win = evaluate_winner()
     mes = decide_winner(win)
-    
-
-    
     return moveResponse(mes,table)
 
 
