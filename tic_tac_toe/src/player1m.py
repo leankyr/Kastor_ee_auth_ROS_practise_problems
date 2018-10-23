@@ -5,11 +5,19 @@ import rospy
 import random
 from tic_tac_toe.msg import table, moveMessage
 import time
+from std_msgs.msg import String
+
 
 def show_table(table):
     print table[0],' ',table[1],' ',table[2]
     print table[3],' ',table[4],' ',table[5]
     print table[6],' ',table[7],' ',table[8]
+    print
+
+
+
+
+
 
 
 def publish_move():
@@ -21,11 +29,18 @@ def publish_move():
     #move.y = int(raw_input('give y: '))
     rospy.loginfo('move is :' + str(move.x) + ' ' + str(move.y))
     pub_move.publish(move)
-    return 'move Published'
+    return 'Player1 move Published'
+
+
+def msg_callback(msg):
+    rospy.loginfo(msg.data)
+    rospy.loginfo('GAME OVER')
+    rospy.signal_shutdown('game is over!!')
+
 
 
 def table_callback(msg):
-    rospy.loginfo('I am in table CallBack!!')
+    rospy.loginfo('I am in table CallBack of Player1!!')
     show_table(msg.table)
     #show_table(msg.table)
 
@@ -34,9 +49,10 @@ def player1m():
     rate = rospy.Rate(0.5)
     while not rospy.is_shutdown():
         sub_to_table = rospy.Subscriber('/table_topic',table,table_callback)
+        sub_to_msgs = rospy.Subscriber('/player1_msgs',String,msg_callback)
+
         rospy.loginfo(publish_move())
         rate.sleep()
-    
 
 
 if __name__ == "__main__":

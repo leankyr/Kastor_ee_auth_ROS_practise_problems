@@ -40,20 +40,49 @@ def evaluate_winner():
     return 0
 
 
-def publish_board(table_pub,rate):
+def shutdown_server(win,m1,m2):
+    if win == 1:
+        msg1 = String()
+        msg2 = String()
+
+        print "HEY I IS ANYONE ALIVE OUT THERE???"
+        msg1.data = 'Congrats You Won!!'
+        msg2.data = 'You are Unworthy!!'
+        m1.publish(msg1)
+        m2.publish(msg2)
+        print "message published"
+    else:
+        msg1 = String()
+        msg2 = String()
+
+        print "NOOOOOOO"
+        msg2.data = 'Congrats You Won!!'
+        msg1.data = 'You are Unworthy!!'
+        m1.publish(msg1)
+        m2.publish(msg2)
+        print "message published"
+
+    rospy.loginfo('Sleeping for 10...')
+    #rospy.sleep(10)
+    rospy.signal_shutdown('game is over!!')
+
+
+
+def publish_board(table_pub,m1,m2):
     rospy.loginfo('Publishing board....')
     rospy.loginfo(board)
     msg = table()
     msg.table = board
     rospy.loginfo('Evaluate Winner is %d',evaluate_winner())
     table_pub.publish(msg)
+    if evaluate_winner() != 0:
+        shutdown_server(evaluate_winner(),m1,m2)
 
 
 def player1_callback(msg,args):
     
     rospy.loginfo('Got into Player Callback1!!')
-    table_pub = args[0]
-    msgs_to_p1 = args[1]
+    table_pub = args
     pos = 3*(msg.x-1) + msg.y - 1
     board[pos] = 1
     msg_of_table = table()
@@ -65,8 +94,7 @@ def player1_callback(msg,args):
 
 def player2_callback(msg,args):
     rospy.loginfo('Got into Player Callback2!!')
-    table_pub = args[0]
-    msgs_to_p1 = args[1]
+    table_pub = args
     pos = 3*(msg.x-1) + msg.y - 1
     board[pos] = 2
     msg_of_table = table()
@@ -78,13 +106,14 @@ def player2_callback(msg,args):
 def tic_tac_toe_server():
     rospy.init_node('m_server',)
     table_pub = rospy.Publisher('/table_topic',table,queue_size=10)
-    msgs_to_P1 = rospy.Publisher('/player1_msgs',String,queue_size=10)
-    msgs_to_P2 = rospy.Publisher('/player2_msgs',String,queue_size=10)
+    msgs_to_P1 = rospy.Publisher('player1_msgs',String,queue_size=1)
+    msgs_to_P2 = rospy.Publisher('player2_msgs',String,queue_size=1)
+
     rate = rospy.Rate(0.5)
     while not rospy.is_shutdown():
-        publish_board(table_pub,rate)
-        Sub_to_play1 = rospy.Subscriber('/player1_moves',moveMessage,player1_callback,(table_pub,msgs_to_P1))
-        Sub_to_play2 = rospy.Subscriber('/player2_moves',moveMessage,player2_callback,(table_pub,msgs_to_P2))
+        publish_board(table_pub,msgs_to_P1,msgs_to_P2)
+        Sub_to_play1 = rospy.Subscriber('/player1_moves',moveMessage,player1_callback,(table_pub))
+        Sub_to_play2 = rospy.Subscriber('/player2_moves',moveMessage,player2_callback,(table_pub))
         rate.sleep()
 
 

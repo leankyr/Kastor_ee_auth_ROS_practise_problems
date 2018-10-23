@@ -1,0 +1,5 @@
+<launch>
+    <node name="m_server" pkg="tic_tac_toe" type="m_server.py" output="screen"/>
+    <node name="player1m" pkg="tic_tac_toe" type="player1m.py" output="screen"/>
+    <node name="player2m" pkg="tic_tac_toe" type="player2m.py" output="screen"/>
+</launch>
