@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import ipdb
 import sys
 import rospy
 from tic_tac_toe.msg import table
