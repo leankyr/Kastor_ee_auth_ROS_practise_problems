@@ -1,63 +1,56 @@
 #!/usr/bin/env python
 
-import sys
+from __future__ import print_function
 import rospy
+# Brings in the SimpleActionClient
+import actionlib
 import random
-from tic_tac_toe.msg import table, moveMessage
-import time
-from std_msgs.msg import String
+# Brings in the messages used by the fibonacci action, including the
+# goal message and the result message.
+import tic_tac_toe.msg
+
+def player1_client():
+    # Creates the SimpleActionClient, passing the type of the action
+    # (FibonacciAction) to the constructor.
+    client = actionlib.SimpleActionClient('player1client', tic_tac_toe.msg.playAction)
+
+    # Waits until the action server has started up and started
+    # listening for goals.
+    client.wait_for_server()
+
+    # Creates a goal to send to the action server.
+    goal = tic_tac_toe.msg.playGoal()
+    goal.x = random.randrange(1,4)
+    goal.y = random.randrange(1,4)
+    goal.player = 'player1'
+    #rospy.loginfo('the goal is %d',goal.x)
+    #rospy.loginfo('the goal is %d',goal.y)
+    #rospy.loginfo('the name  is %s',goal.player)
+
+    # Sends the goal to the action server.
+    client.send_goal(goal)
+
+    # Waits for the server to finish performing the action.
+    client.wait_for_result()
+
+    # Prints out the result of executing the action
+    return client.get_result()  # A FibonacciResult
 
 
-def show_table(table):
-    print table[0],' ',table[1],' ',table[2]
-    print table[3],' ',table[4],' ',table[5]
-    print table[6],' ',table[7],' ',table[8]
-    print
-
-
-
-
-
-
-
-def publish_move():
-    pub_move = rospy.Publisher('/player1_moves',moveMessage,queue_size = 10)
-    move = moveMessage()
-    move.x = random.randrange(1,4)
-    move.y = random.randrange(1,4)
-    #move.x = int(raw_input('give x: '))
-    #move.y = int(raw_input('give y: '))
-    rospy.loginfo('move is :' + str(move.x) + ' ' + str(move.y))
-    pub_move.publish(move)
-    return 'Player1 move Published'
-
-
-def msg_callback(msg):
-    rospy.loginfo(msg.data)
-    rospy.loginfo('GAME OVER')
-    rospy.signal_shutdown('game is over!!')
-
-
-
-def table_callback(msg):
-    rospy.loginfo('I am in table CallBack of Player1!!')
-    show_table(msg.table)
-    #show_table(msg.table)
-
-def player1m():
-    rospy.init_node('player1m')
-    rate = rospy.Rate(0.5)
-    while not rospy.is_shutdown():
-        sub_to_table = rospy.Subscriber('/table_topic',table,table_callback)
-        sub_to_msgs = rospy.Subscriber('/player1_msgs',String,msg_callback)
-
-        rospy.loginfo(publish_move())
-        rate.sleep()
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
-        player1m()
+        # Initializes a rospy node so that the SimpleActionClient can
+        # publish and subscribe over ROS.
+        rospy.init_node('player1client')
+        rate = rospy.Rate(0.5)
+        while not rospy.is_shutdown():
+            result = player1_client()
+            #rospy.loginfo(result.feedback)
+            print(result.table)
+            rate.sleep()
     except rospy.ROSInterruptException:
-        pass
+        print("program interrupted before completion", file=sys.stderr)
+
+
+
 
