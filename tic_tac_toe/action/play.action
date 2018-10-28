@@ -1,0 +1,10 @@
+# Goal
+string player
+int16 x		
+int16 y
+---
+# Result
+int16[9] table 
+---
+# Feedback
+string message  
