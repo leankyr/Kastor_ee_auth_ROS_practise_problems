@@ -31,13 +31,15 @@ def obstacle_avoid(msg,args):
    # print ("linear vel is: " + str(linear))
    # print ("angular vel is: " + str(angular))   
 
-    if (linear > 0.2):
+
+    if (linear > 0.2):  # all these are 0.2 at stable vesrion
         linear = 0.2
     elif(linear < -0.2):
         linear = -0.2
 
     msg = Twist()
     msg.linear.x =  0.1 + linear
+
     #msg.linear.y =  0.1 + linear
     msg.angular.z = angular
     pub.publish(msg)
