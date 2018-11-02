@@ -1,0 +1,8 @@
+<launch>
+	<node name="rviz" type="rviz" pkg="rviz"/>
+	<include file = "$(find stdr_launchers)/launch/server_with_map_and_gui_plus_robot.launch"/>
+	<include file = "/home/mastertsoutsos/catkin_ws/src/crsm-slam-ros-pkg/crsm_slam/launch/crsm_slam_simulation.launch"/>
+	<node name="obst_avoid_node" type="obstacle_avoid.py" pkg="obstacle_avoidance" output="screen"/>
+</launch>   
+
+
