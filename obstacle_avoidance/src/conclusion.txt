@@ -1,0 +1,2 @@
+As time passes I see the green box losing cadence with the robot pose provided by CRSM slam
+I guess this happens becuase of additive error from resolution?? or maybe the error from rospy.time(0) as time passes between the calculation of transform and the fun call??
